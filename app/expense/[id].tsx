@@ -17,6 +17,7 @@ import { useExpense, useExpenses } from '../../src/hooks/expenseHooks/useExpense
 import { useTheme } from '../../src/hooks/themeHooks/useTheme';
 import { Spacing, BorderRadius } from '../../src/theme/spacing';
 import { Typography } from '../../src/theme/typography';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 export default function ExpenseDetailsScreen() {
     const router = useRouter();
@@ -36,7 +37,7 @@ export default function ExpenseDetailsScreen() {
                         await deleteExpense(id);
                         router.back();
                     } catch (error) {
-                        console.error('Failed to delete expense:', error);
+                        showApiErrorAlert(error, { fallbackMessage: 'Failed to delete expense' });
                     }
                 },
             },

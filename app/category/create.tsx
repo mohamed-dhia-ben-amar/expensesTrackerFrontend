@@ -16,6 +16,7 @@ import { useCategories } from '../../src/hooks/categoryHooks/useCategories';
 import { useTheme } from '../../src/hooks/themeHooks/useTheme';
 import { Spacing, BorderRadius } from '../../src/theme/spacing';
 import { Typography } from '../../src/theme/typography';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 const categorySchema = z.object({
     name: z.string().min(1, 'Name is required'),
@@ -48,7 +49,7 @@ export default function CreateCategoryScreen() {
             await createCategory(data);
             router.back();
         } catch (error) {
-            console.error('Failed to create category:', error);
+            showApiErrorAlert(error, { fallbackMessage: 'Failed to create category' });
         }
     };
 

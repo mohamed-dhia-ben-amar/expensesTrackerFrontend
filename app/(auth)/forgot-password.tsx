@@ -19,6 +19,7 @@ import { Spacing } from '../../src/theme/spacing';
 import { Typography } from '../../src/theme/typography';
 import { LinearGradient } from 'expo-linear-gradient';
 import { authEndpoints } from '../../src/services/endpoints';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 const forgotPasswordSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -60,7 +61,7 @@ export default function ForgotPasswordScreen() {
                 ]
             );
         } catch (error: any) {
-            Alert.alert('Error', error?.response?.data?.message || 'Failed to send reset code');
+            showApiErrorAlert(error, { title: 'Error', fallbackMessage: 'Failed to send reset code' });
         } finally {
             setIsLoading(false);
         }

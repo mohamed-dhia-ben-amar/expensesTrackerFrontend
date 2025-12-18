@@ -22,6 +22,7 @@ import { Typography } from '../../src/theme/typography';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 const loginSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -83,7 +84,7 @@ export default function LoginScreen() {
             
             router.replace('/(tabs)');
         } catch (error) {
-            console.error('Login failed:', error);
+            showApiErrorAlert(error, { fallbackMessage: 'Login failed' });
         }
     };
 

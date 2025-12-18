@@ -14,6 +14,7 @@ import { Typography } from '@/theme/typography';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/themeHooks/useTheme';
 import { Button } from '@/components/ui/Button';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 export default function VerificationRequiredScreen() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function VerificationRequiredScreen() {
             await authEndpoints.requestVerification({ email: user.email });
             alert('Verification code sent to your email');
         } catch (error: any) {
-            alert(error?.response?.data?.message || 'Failed to send verification code');
+            showApiErrorAlert(error, { fallbackMessage: 'Failed to send verification code' });
         } finally {
             setIsResending(false);
         }

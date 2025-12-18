@@ -24,6 +24,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 const registerSchema = z.object({
     firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -69,7 +70,7 @@ export default function RegisterScreen() {
                 params: { email: data.email }
             });
         } catch (error) {
-            console.error('Registration failed:', error);
+            showApiErrorAlert(error, { fallbackMessage: 'Registration failed' });
         }
     };
 

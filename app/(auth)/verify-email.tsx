@@ -16,6 +16,7 @@ import { Spacing } from '../../src/theme/spacing';
 import { Typography } from '../../src/theme/typography';
 import { LinearGradient } from 'expo-linear-gradient';
 import { authEndpoints } from '../../src/services/endpoints';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 export default function VerifyEmailScreen() {
     const router = useRouter();
@@ -60,7 +61,7 @@ export default function VerifyEmailScreen() {
                 { text: 'OK', onPress: () => router.replace('/(auth)/login') }
             ]);
         } catch (error: any) {
-            Alert.alert('Verification Failed', error?.response?.data?.message || 'Invalid or expired OTP');
+            showApiErrorAlert(error, { title: 'Verification Failed', fallbackMessage: 'Invalid or expired OTP' });
         } finally {
             setIsVerifying(false);
         }
@@ -74,7 +75,7 @@ export default function VerifyEmailScreen() {
             setOtp(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
         } catch (error: any) {
-            Alert.alert('Error', error?.response?.data?.message || 'Failed to resend code');
+            showApiErrorAlert(error, { title: 'Error', fallbackMessage: 'Failed to resend code' });
         } finally {
             setIsResending(false);
         }

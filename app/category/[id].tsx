@@ -18,6 +18,7 @@ import { Spacing, BorderRadius } from '../../src/theme/spacing';
 import { Typography } from '../../src/theme/typography';
 import { Category } from '@/types/expense.types';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 export default function CategoryDetailsScreen() {
     const router = useRouter();
@@ -38,7 +39,7 @@ export default function CategoryDetailsScreen() {
                         await deleteCategory(id);
                         router.back();
                     } catch (error) {
-                        console.error('Failed to delete category:', error);
+                        showApiErrorAlert(error, { fallbackMessage: 'Failed to delete category' });
                     }
                 },
             },

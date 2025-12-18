@@ -20,6 +20,7 @@ import { Spacing } from '../../src/theme/spacing';
 import { Typography } from '../../src/theme/typography';
 import { LinearGradient } from 'expo-linear-gradient';
 import { authEndpoints } from '../../src/services/endpoints';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 const resetPasswordSchema = z.object({
     newPassword: z.string().min(6, 'Password must be at least 6 characters'),
@@ -91,7 +92,7 @@ export default function ResetPasswordScreen() {
                 [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }]
             );
         } catch (error: any) {
-            Alert.alert('Reset Failed', error?.response?.data?.message || 'Invalid or expired code');
+            showApiErrorAlert(error, { title: 'Reset Failed', fallbackMessage: 'Invalid or expired code' });
         } finally {
             setIsResetting(false);
         }
@@ -105,7 +106,7 @@ export default function ResetPasswordScreen() {
             setOtp(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
         } catch (error: any) {
-            Alert.alert('Error', error?.response?.data?.message || 'Failed to resend code');
+            showApiErrorAlert(error, { title: 'Error', fallbackMessage: 'Failed to resend code' });
         } finally {
             setIsResending(false);
         }

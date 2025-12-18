@@ -5,6 +5,7 @@ import { ExpenseForm } from '../../src/components/expense/ExpenseForm';
 import { useExpenses } from '../../src/hooks/expenseHooks/useExpenses';
 import { useTheme } from '../../src/hooks/themeHooks/useTheme';
 import { CreateExpenseDto } from '../../src/types/expense.types';
+import { showApiErrorAlert } from '@/utils/apiError';
 
 export default function CreateExpenseScreen() {
     const router = useRouter();
@@ -16,7 +17,7 @@ export default function CreateExpenseScreen() {
             await createExpense(data);
             router.back();
         } catch (error) {
-            console.error('Failed to create expense:', error);
+            showApiErrorAlert(error, { fallbackMessage: 'Failed to create expense' });
         }
     };
 
