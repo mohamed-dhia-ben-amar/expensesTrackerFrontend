@@ -46,6 +46,7 @@ function RootLayoutNav() {
                     name="expense/[id]"
                     options={{
                         title: 'Expense Details',
+                        headerBackTitle: 'Back',
                     }}
                 />
                 <Stack.Screen
@@ -59,10 +60,15 @@ function RootLayoutNav() {
                     name="category/[id]"
                     options={{
                         title: 'Category Details',
+                        headerBackTitle: 'Back',
                     }}
                 />
                 <Stack.Screen
                     name="verification-required"
+                    options={{ headerShown: false, gestureEnabled: false }}
+                />
+                <Stack.Screen
+                    name="edit-profile"
                     options={{ headerShown: false, gestureEnabled: false }}
                 />
             </Stack>

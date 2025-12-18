@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -19,12 +19,18 @@ import { Typography } from '../../src/theme/typography';
 import { Category } from '@/types/expense.types';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { showApiErrorAlert } from '@/utils/apiError';
+import { Input } from '@/components/ui/Input';
+import { Pencil, X } from 'lucide-react-native';
+import { Modal } from 'react-native';
 
 export default function CategoryDetailsScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id: string }>();
     const { colors } = useTheme();
-    const { categories, deleteCategory, isDeleting } = useCategories();
+    const { categories, deleteCategory, isDeleting, updateCategory, isUpdating, refetch } = useCategories();
+    const [editing, setEditing] = useState(false);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
 
     const category = categories.find((c: Category) => c._id === id);
 
@@ -46,6 +52,22 @@ export default function CategoryDetailsScreen() {
         ]);
     };
 
+    const beginEdit = () => {
+        setName(category?.name || '');
+        setDescription(category?.description || '');
+        setEditing(true);
+    };
+
+    const saveEdit = async () => {
+        try {
+            await updateCategory({ id, data: { name, description } });
+            setEditing(false);
+            await refetch();
+        } catch (error) {
+            showApiErrorAlert(error, { fallbackMessage: 'Failed to update category' });
+        }
+    };
+
     if (!category) {
         return (
             <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -57,6 +79,11 @@ export default function CategoryDetailsScreen() {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
+                {!editing && (
+                    <TouchableOpacity onPress={beginEdit} style={[styles.iconButton, { backgroundColor: colors.card }]}> 
+                        <Pencil color={colors.text} size={18} />
+                    </TouchableOpacity>
+                )}
                 <Card style={styles.previewCard}>
                     <Text style={[styles.categoryName, { color: colors.text }]}>
                         {category.name}
@@ -75,6 +102,26 @@ export default function CategoryDetailsScreen() {
                         </Text>
                     </View>
                 </Card>
+
+                {/* Edit Category Modal */}
+                <Modal visible={editing} transparent animationType="fade" onRequestClose={() => setEditing(false)}>
+                    <View style={styles.modalOverlay}>
+                        <View style={[styles.modalContent, { backgroundColor: colors.card || colors.background }]}> 
+                            <View style={{ alignItems: 'flex-end' }}>
+                                <TouchableOpacity onPress={() => setEditing(false)} style={[styles.closeButton, { backgroundColor: colors.background }]}> 
+                                    <X color={colors.text} size={18} />
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>Edit Category</Text>
+                            <Input label="Name" value={name} onChangeText={setName} containerStyle={{ paddingVertical: Spacing.md }} />
+                            <Input label="Description" value={description} onChangeText={setDescription} containerStyle={{ paddingVertical: Spacing.md }} />
+                            <View style={{ flexDirection: 'row', gap: Spacing.sm, padding: Spacing.md }}>
+                                <Button title={isUpdating ? 'Saving…' : 'Save'} onPress={saveEdit} loading={isUpdating} fullWidth />
+                                <Button title="Cancel" onPress={() => setEditing(false)} variant="outline" fullWidth />
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
 
                 {/* Related Expenses */}
                 <View style={styles.section}>
@@ -128,15 +175,6 @@ export default function CategoryDetailsScreen() {
                 <View style={styles.spacer} />
 
                 <View style={styles.actions}>
-                    <Button
-                        title="Edit"
-                        onPress={() => {
-                            Alert.alert('Edit', 'Edit functionality coming soon');
-                        }}
-                        variant="outline"
-                        fullWidth
-                        style={styles.actionButton}
-                    />
                     <Button
                         title="Delete"
                         onPress={handleDelete}
@@ -261,5 +299,45 @@ const styles = StyleSheet.create({
     },
     actionButton: {
         marginBottom: Spacing.sm,
+    },
+    iconButton: {
+        position: 'absolute',
+        right: Spacing.md,
+        top: Spacing.md,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        zIndex: 2,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '92%',
+        borderRadius: 20,
+        padding: Spacing.md,
+        maxHeight: '90%',
+    },
+    modalTitle: {
+        fontSize: Typography.fontSize.xl,
+        fontWeight: Typography.fontWeight.bold,
+        marginBottom: Spacing.md,
+        textAlign: 'center',
+    },
+    closeButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

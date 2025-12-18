@@ -58,6 +58,10 @@ export const authEndpoints = {
     // POST /api/v1/users/password/reset
     resetPassword: (data: { email: string; otp: string; newPassword: string }) =>
         apiService.post<ApiResponse<{ message: string }>>("/users/password/reset", data),
+
+    // PUT /api/v1/users/profile
+    updateProfile: (data: Partial<User> & { firstName?: string; lastName?: string; dateOfBirth?: string; placeOfBirth?: string }) =>
+        apiService.put<ApiResponse<User>>("/users/profile", data),
 };
 
 export const expenseEndpoints = {

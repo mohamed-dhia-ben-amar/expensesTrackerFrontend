@@ -60,3 +60,6 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
 }
+
+// Profile Updates
+export type UpdateProfileRequest = Partial<Pick<User, 'firstName' | 'lastName' | 'dateOfBirth' | 'placeOfBirth'>>;
